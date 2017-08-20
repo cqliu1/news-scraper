@@ -1,0 +1,19 @@
+{
+  "name": "news-scraper",
+  "version": "1.0.0",
+  "description": "A web app that lets users leave comments on the latest news",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cqliu1/news-scraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cqliu1/news-scraper/issues"
+  },
+  "homepage": "https://github.com/cqliu1/news-scraper#readme"
+}
