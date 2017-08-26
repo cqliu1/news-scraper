@@ -14,7 +14,7 @@ var ArticleSchema = new Schema({
   summary: {
     type: String,
     required: true
-  }
+  },
   // url is a required string
   url: {
     type: String,

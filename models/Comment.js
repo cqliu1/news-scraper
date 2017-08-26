@@ -23,7 +23,7 @@ var CommentSchema = new Schema({
 // These ids are referred to in the Article model
 
 // Create the Comment model with the CommentSchema
-var Note = mongoose.model("Comment", CommentSchema);
+var Comment = mongoose.model("Comment", CommentSchema);
 
 // Export the Comment model
 module.exports = Comment;
