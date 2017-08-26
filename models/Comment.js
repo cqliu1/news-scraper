@@ -6,16 +6,14 @@ var Schema = mongoose.Schema;
 // Create the Comment schema
 var CommentSchema = new Schema({
   // Just a string
-  title: {
-    type: String
-  },
-  // Just a string
   body: {
-    type: String
+    type: String,
+    required: true
   },
   // Just a string
-  name: {
-    type: String
+  user: {
+    type: String,
+    required: true
   }
 });
 

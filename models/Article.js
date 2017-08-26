@@ -18,7 +18,8 @@ var ArticleSchema = new Schema({
   // url is a required string
   url: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   // This only saves one comments's ObjectId, ref refers to the Comment model
   comments: [

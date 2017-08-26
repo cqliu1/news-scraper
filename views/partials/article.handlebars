@@ -1,9 +1,10 @@
-<a href="{{link}}">
-	<div class="card" style="width: 20rem;">
+<a href="/article/{{_id}}">
+	<div class="card border-primary" style="width: 20rem;">
 	  <div class="card-body">
 	    <h4 class="card-title">{{headline}}</h4>
-	    <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+	    {{#if summary}}
 	    <p class="card-text">{{summary}}</p>
+	    {{/if}}
 	  </div>
 	</div>
 </a>

@@ -32,7 +32,7 @@ app.use(express.static("public"));
 
 // Database configuration for mongoose
 // db: newsscraper
-mongoose.connect("mongodb://localhost/newsscraper");
+mongoose.connect("mongodb://heroku_107ljph3:ao3411blmkml5ubn6go9chj0t6@ds149603.mlab.com:49603/heroku_107ljph3");
 // Hook mongoose connection to db
 var db = mongoose.connection;
 
@@ -50,9 +50,6 @@ db.once("open", function() {
 // ======
 
 app.get("/", function(req, res) {
-
-
-
   // TODO: Finish the route so it grabs all of the articles
   Article.find()
     .exec( function(err, articles) {
@@ -65,18 +62,18 @@ app.get("/", function(req, res) {
 // A GET request to scrape the echojs website
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with request
-  request("https://www.nytimes.com/", function(error, response, html) {
+  request("http://www.npr.org/sections/news/", function(error, response, html) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
     // Now, we grab every h2 within an article tag, and do the following:
-    $("article.theme-summary").each(function(i, element) {
-
+    $("div.item-info").each(function(i, element) {
+      console.log(element);
       // Save an empty result object
       var result = {};
 
       // Add the text and href of every link, and save them as properties of the result object
       result.headline = $(this).children("h2").children("a").text();
-      result.summary = $(this).children("h2").children("p.summary").text();
+      result.summary = $(this).children("p.teaser").text();
       result.url = $(this).children("h2").children("a").attr("href");
 
       // Using our Article model, create a new entry
@@ -84,84 +81,57 @@ app.get("/scrape", function(req, res) {
       var entry = new Article(result);
       console.log(entry);
 
-      // // Now, save that entry to the db
-      // entry.save(function(err, doc) {
-      //   // Log any errors
-      //   if (err) {
-      //     console.log(err);
-      //   }
-      //   // Or log the doc
-      //   else {
-      //     console.log(doc);
-      //   }
-      // });
-
+      // Now, save that entry to the db
+      if(!(result.headline.length === 0 || result.url.length === 0)) {
+        entry.save(function(err, doc) {
+          // Log any errors
+          if (err) {
+            console.log(err);
+          }
+          // Or log the doc
+          else {
+            console.log("Saved:",doc);
+          }
+        });
+      }
     });
   });
   // Tell the browser that we finished scraping the text
-  // res.send("Scrape Complete");
-});
-
-// This will get the articles we scraped from the mongoDB
-app.get("/articles", function(req, res) {
-
-
-  // TODO: Finish the route so it grabs all of the articles
-  Article.find()
-    .exec( function(err, articles) {
-      res.send(articles);
-    });
-
+  res.send("Scrape Complete");
 });
 
 // This will grab an article by it's ObjectId
-app.get("/articles/:id", function(req, res) {
+app.get("/article/:id", function(req, res) {
 
-
-  // TODO
-  // ====
-
-  // Finish the route so it finds one article using the req.params.id,
-
-  // and run the populate method with "note",
-
-  // then responds with the article with the note included
   Article.findOne({_id: mongoose.mongo.ObjectId(req.params.id)})
-    .populate("note")
+    .populate("comments")
     .exec( function(err, article) {
       if(err) {
         res.send(err);
       } else {
-        res.send(article);
+        console.log(article);
+        res.render("article", {
+          article
+        });
       }
     });
-
 
 });
 
 // Create a new note or replace an existing note
-app.post("/articles/:id", function(req, res) {
+app.post("/article/:id", function(req, res) {
+  console.log("REQ BODY:", req.body);
+  let newComment = new Comment(req.body);
 
-
-  // TODO
-  // ====
-
-  // save the new note that gets posted to the Notes collection
-
-  // then find an article from the req.params.id
-
-  // and update it's "note" property with the _id of the new note
-  let newNote = new Note(req.body);
-
-  newNote.save( function(err, note) {
+  newComment.save( function(err, comment) {
     if(err){ 
       res.send(err);
     } else {
-      Article.findOneAndUpdate({_id: mongoose.mongo.ObjectId(req.params.id)}, { $set: { note: note._id } }, function(err, article) {
+      Article.findOneAndUpdate({_id: mongoose.mongo.ObjectId(req.params.id)}, { $push: { comments: comment._id } }, function(err, article) {
         if(err){ 
           res.send(err);
         } else {
-          res.send(article)
+          res.redirect("/article/" + req.params.id);
         }
       });
     }

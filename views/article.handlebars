@@ -1,0 +1,31 @@
+<div id="article">
+	  	<a href="{{article.url}}">
+	    	<h4>{{article.headline}}</h4>
+	    </a>
+	    {{#if article.summary}}
+	    <p>{{article.summary}}</p>
+	    {{/if}}
+	  </div>
+	</div>
+</div>
+<div id="comments" class="col-md-8">
+	<h2>Comments</h2>
+	<form id="comment-form" action="/article/{{article._id}}" method="post">
+		<div class="form-group">
+		    <label for="body">Comment</label>
+		    <textarea class="form-control" name="body" id="exampleFormControlTextarea1" rows="3" required></textarea>
+		</div>
+		<div class="form-group">
+		    <label for="user">Username</label>
+		    <input type="text" class="form-control" name="user" id="comment-body" required>
+		</div>
+		<button type="submit" class="btn btn-primary">Add Comment</button>
+	</form>
+	<br />
+	{{#each article.comments}}
+	<hr>
+		<div class="container">
+			{{> comment}}
+		</div>
+	{{/each}}
+</div>
